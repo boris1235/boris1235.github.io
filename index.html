@@ -1,0 +1,572 @@
+
+
+
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  
+  
+
+<meta name="citation_title" content="Data Mining the Internet Archive Collection" />
+
+<meta name="citation_author" content="Caleb McDaniel" />
+
+<meta name="citation_publication_date" content="2014-03-03" />
+<meta name="citation_journal_title" content="Programming Historian" />
+<meta name="citation_public_url" content="https://programminghistorian.org/en/lessons/data-mining-the-internet-archive" />
+
+  
+
+<style>
+    * {
+      font-family: sans-serif;
+    }
+</style>
+
+  <!-- Mobile viewport optimized: h5bp.com/viewport -->
+  <meta name="viewport" content="width=device-width">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+
+  <link href='/feed.xml' rel='alternate' type='application/atom+xml'>
+
+  <title>כריית מידע בארכיון האינטרנטי</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Crete+Round|Open+Sans|Quattrocento|Roboto|Roboto+Condensed" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous" media="all">
+  <link rel="stylesheet" href="css/github.css">
+  <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+
+  <body>
+    <main>
+      <div class="hide-screen">
+        
+<header>
+
+  <div class="container-fluid">
+
+    <div class="container expanded">
+    </div>
+  </div>
+  </div>
+
+    <div class="container-fluid header-bottom">
+      <div class="container expanded">
+        <div class="d-flex flex-wrap flex-md-row flex-column justify-content-between">
+          <div class="metarow">
+            <h4>פורסם בתאריך</h4> 2014-03-03
+          </div>
+          <div class="metarow">
+            <h4>מפרסם</h4> Caleb McDaniel
+          </div>
+          <div class="metarow">
+            <h4>מתרגמים</h4> בוריס צירקין ועמית כהן
+          </div>
+          <div class="metarow">
+            <h4>רמת קושי</h4> 
+                בינונית
+          </div>
+        </div>
+      </div>
+    </div>
+
+</header>
+
+<div class="container">
+  <div class="content">
+    
+<h2 class="no_toc" id="contents">תוכן עניינים</h2>
+
+<ul id="markdown-toc">
+  <li><a href="#lesson-goals" id="markdown-toc-lesson-goals">מטרות השיעור</a></li>
+  <li><a href="#for-whom-is-this-useful" id="markdown-toc-for-whom-is-this-useful">למי זה שימושי?</a></li>
+  <li><a href="#before-you-begin" id="markdown-toc-before-you-begin">לפני ההתחלה</a></li>
+  <li><a href="#the-antislavery-collection-at-the-internet-archive" id="markdown-toc-the-antislavery-collection-at-the-internet-archive">The Antislavery Collection בארכיון האינטרנטי</a></li>
+  <li><a href="#accessing-an-ia-collection-in-python" id="markdown-toc-accessing-an-ia-collection-in-python">גישה לאוסף בארכיון האינטרנטי</a></li>
+  <li><a href="#accessing-an-ia-item-in-python" id="markdown-toc-accessing-an-ia-item-in-python">גישה לפריט בפייטון</a></li>
+  <li><a href="#downloading-marc-records-from-a-collection" id="markdown-toc-downloading-marc-records-from-a-collection">הורדת רשומות MARC מקולקציה</a></li>
+  <li><a href="#understanding-the-for-loop" id="markdown-toc-understanding-the-for-loop">הבנת לולאת ה-for</a></li>
+  <li><a href="#download-all-the-marc-xml-files-from-a-collection" id="markdown-toc-download-all-the-marc-xml-files-from-a-collection">הורדת כל קבצי ה-MARC XML מתוך אוסף</a></li>
+  <li><a href="#building-error-reporting-into-the-script" id="markdown-toc-building-error-reporting-into-the-script">הוספת דיווח שגיאות לסקריפט</a></li>
+  <li><a href="#scraping-information-from-a-marc-record" id="markdown-toc-scraping-information-from-a-marc-record">חילוץ מידע מתוך רשומת ה-MARC</a></li>
+</ul>
+
+<h2 id="lesson-goals">מטרות השיעור</h2>
+
+<p>האוספים של <a href="https://archive.org/">הארכיון האינטרנטי</a> (IA) מכילים הרבה מקורות שעברו דיגיטציה אשר מהווים מקור עניין להיסטוריונים, כמו 
+<a href="https://archive.org/details/jstor_ejc">תוכן מוקדם של כתב העט JSOTR</a>,
+<a href="https://archive.org/details/johnadamsBPL">הספריה האישית של John Adams</a>, ו <a href="https://archive.org/details/jcbhaiti">וקולקציית האיטי</a> 
+מהספריה של John Carter Brown. בקצרה, ציטוט של ההיסטוריון המתכנת
+ <a href="http://activehistory.ca/2013/09/the-internet-archive-rocks-or-two-million-plus-free-sources-to-explore/">Ian Milligan</a>, "הארכיון האינטרנטי אדיר".</p>
+
+<p>בשיעור זה, תלמדו כיצד להוריד קבצים כמו אוספים באמצעות מודול ב-Python שעוצב במיוחד עבור הארכיון האינטרנטי.
+     תלמדו בנוסף איך להשתמש במודול פייטון אחר שעוצב בשביל לפרסס רשומות MARC XML,
+     סטנדרט נפוץ מאוד לשמירת מטא-דאטה על ביבליוגרפיה.</p>
+
+<p>לצורכי הדגמה, שיעור זה יתמקד בעבודה עם הגירסה הדיגיטלית של 
+<a href="https://archive.org/details/bplscas">אוסף אנטי-העבדות</a> העבדות (The Anti Slavery Collection)
+בספריה הלאומית של בוסטון בכיכר קופלי.
+ ראשית נוריד אוסף גדול של רשומות MARC מקולקציה זו, ולאחר מכן נשתמש בפייטון על מנת לחלץ ולנתח מידע ביבליוגרפי על פריטים בקולקציה זו.
+ לדוגמא, בסוף שיעור זה, תוכלו ליצור רשימה של שמות כל המקומות בהם נכתב מכתב מאוסף זה, שבה תוכלו להשתמש כדי ליצור מפה או לכל ניתוח אחר של המידע.</p>
+
+<h2 id="for-whom-is-this-useful">למי זה שימושי?</h2>
+
+<p>שיעור ברמת קושי בינונית זה טוב למשתמשים שסיימו שיעורים כללים על הורדת קבצים וניתוח נתונים על קבצים אלו, אבל מעדיפים לראות דוגמא מוחשית של עקרונות אלה. בנוסף, היסטוריונים או עובדי ארכיון שעובדים עם פורמט ה-MARC או משתמשים בארכיון האינטרנטי בקביעות ימצאו עניין בכתבה זו.</p>
+
+<h2 id="before-you-begin">לפני ההתחלה</h2>
+
+<p>כדי לכתוב סקריפטים שיעבדו עם הארכיון האינטרנטי, תצטרכו תחילה 
+<a href="https://archive.org/account/login.createaccount.php">ליצור משתמש</a>.
+עקבו אחר ההוראות כדי לאשר את המשתמש וזכרו את שם המשתמש והסיסמא שבחרתם.</p>
+
+<p>אנחנו נעבוד עם 2 מודולים ב-Python שלא נמצאים בספריה הסטנדרטית.</p>
+
+<p>הראשון, <a href="https://pypi.python.org/pypi/internetarchive">internetarchive</a>, נותן גישה תכתנותית לארכיון האינטרנטי. השני, 
+<a href="https://pypi.python.org/pypi/pymarc/">pymarc</a>, מקל על פירסור רשומות MARC.</p>
+
+<p>הדרך הפשוטה ביותר להוריד את שניהם היא באמצעות pip, מנהל החבילות של פייטון. התחילו בהתקנת
+<code class="language-plaintext highlighter-rouge">pip</code>
+באמצעות המדריך של Fred Gibbs  <a href="https://programminghistorian.org/en/lessons/installing-python-modules-pip">התקנת מודולים בפייטון באמצעות </a>. לאחר מכן כתבו את הפקודות הבאות בשורת הפקודה: כדי להתקין
+<code class="language-plaintext highlighter-rouge">internetarchive</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code><span class="nb">sudo </span>pip <span class="nb">install </span>internetarchive
+</code></pre></div></div>
+
+<p>כעת תצטרכו להגדיר את המחשב כדי שהחבילה החדשה תעבוד. כתבו <code class="language-plaintext highlighter-rouge">ia configure</code> 
+    בשורת הפקודה, ולאחר מכן הכניסו את האימייל והסיסמא איתם נרשמתם לארכיון האינטרנטי.</p>
+
+<p>כדי להתקין <code class="language-plaintext highlighter-rouge">pymarc</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code><span class="nb">sudo </span>pip <span class="nb">install </span>pymarc
+</code></pre></div></div>
+
+<p>עכשיו אתם מוכנים לעבודה!</p>
+
+<h2 id="the-antislavery-collection-at-the-internet-archive">The Antislavery Collection בארכיון האינטרנטי</h2>
+
+<p>The Antislavery Collection מכילה לא רק את המכתבים של William Lloyd Garrison, 
+    אחד מהסימנים של התנועה האמריקנית לביטול העבדות, אלא גם קולקציות גדולות של מכתבים הקשורים לפעילים אחרים הקשורים אליו.
+     וכאשר אני אומר "קולקציות גדולות" אני מתכוון לגדולות. לפי השערת הספריה, יש מעל ל-16000 פריטים בספריה.</p>
+
+<p>רגע כתיבת מאמר זה, בערך 7000 מפריטים אלה כבר עברו דיגיטציה והועלו ל<a href="https://archive.org/">ארכיון האינטרנטי</a>. 
+    אלו חדשות טובות, לא רק בגלל שהארכיון מראה מחויבות להעלאת תוכן חינמי להורדה, אך בנוסף בגלל שכל פריט שהועלה מוצמד בנוסף לכל המטה-דאטה כך שמכונות יכולות לעבוד איתו.</p>
+
+<p>לדוגמא <a href="https://archive.org/details/lettertowilliaml00doug">המכתב הזה </a> שנשלח על ידי Fredrick Douglass ל-William Lloyd Garrison. כל אחד יכול לקרוא את
+    <a href="https://archive.org/stream/lettertowilliaml00doug/39999066767938#page/n0/mode/2up">הגליון המקורי </a> מבלי לנסוע לבוסטון, וזה בלבד מספיק לעשות הפיכה ודמוקרטיזציה היסטוגרפיה עתידית של ביטול עבדות. אך בנוסף ניתן להוריד
+    <a href="https://archive.org/download/lettertowilliaml00doug">קבצים מרובים</a> הקשורים למכתב ועשירים במטה-דאטה, כמו למשל 
+    <a href="https://archive.org/download/lettertowilliaml00doug/lettertowilliaml00doug_dc.xml">הרשומה Dublin Core </a> וגירסה רחבה יותר של
+     <a href="https://archive.org/download/lettertowilliaml00doug/lettertowilliaml00doug_marc.xml">MARCXML</a> רשומת 
+     שמשתמשת ב- <a href="https://www.loc.gov/marc/bibliographic/">Library of Congress’s MARC 21 Format for Bibliographic
+Data</a>.</p>
+
+<p>עצרו וחשבו על זה לרגע: כל פריט שמועלה מתוך הקולקציה מכיל פריטים כאלה. כרגע, זה אומר שלהיסטוריונים יש גישה למטה-דאטה עשיר, תמונות מלאות ותיאורים חלקיים של 
+<a href="https://archive.org/search.php?query=collection%3Abplscas&amp;sort=-publicdate">אלפי מכתבים נגד עבדות, גליונות ומאמרים</a>.</p>
+
+<h2 id="accessing-an-ia-collection-in-python">גישה לאוסף בארכיון האינטרנטי</h2>
+
+<p>לקולקציות ולפריטים בארכיון האינטרנטי יש מזהה ייחודי, ו-URL לקולקציה ולפריטים נראים כך:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code>
+http://archive.org/details/[IDENTIFIER]
+</code></pre></div></div>
+
+<p>אז, לדוגמא, הינה URL לפריט בארכיון עליו דברנו מקודם, המכתב של Douglas ל-Garrison:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code>
+http://archive.org/details/lettertowilliaml00doug
+</code></pre></div></div>
+
+<p>והינה URL לכל הקולקציה נגד העבדות בספריה הציבורית של בוסטון:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code>
+http://archive.org/details/bplscas/
+</code></pre></div></div>
+
+<p>בגלל שה-URL דומים כל כך,
+     הדרך היחידה לדעת שאתם מסתכלים בדף המייצג קולקציה ולא פריט ספציפי, הוא לבחון את צורת הדף. לפריט בדרך כלל יש sidebar בצד שמאל עליו רשום “View the Book” ורישמות של קישורים לקריאה על הפריט אונליין או גישה לפורמטים אחרים לקובץ.
+      לדף קולקציה, לעומת זאת, כנראה יהיה כפתור “Spotlight Item” ב-sidebar שבצד שמאל במקום. אתם יכולים לנווט לקולקציות שונות דרך פורטל ה-
+    <a href="https://archive.org/details/texts">eBook and Texts</a>, ואתם יכולים לקרוא עוד 
+    <a href="https://blog.archive.org/2011/03/31/how-archive-org-items-are-structured/">על הדרך בה פריטים ו-URL של פריט בנויים.</a>.</p>
+
+<p>ברגע שיש לכם מזהה של קוקלציה, במקרה הזה, <code class="language-plaintext highlighter-rouge">bplscas</code>—לצפות בכל הפריטים בקולקציה זה פשוט מאוד. ע"י ניווט
+    <a href="https://archive.org/advancedsearch.php">לחיפוש מתקדם</a> של הארכיון, בחירת המזהה הייחודי (id) בשדה ליד “Collection” ולחיצה על חיפוש. ביצוע חיפוש זה עם
+    <code class="language-plaintext highlighter-rouge">bplscas</code> מחזיר את 
+    <a href="https://archive.org/search.php?query=collection%3A%28bplscas%29">הדף הזה</a>, שברגע כתיבת מאמר זה הכיל 7029 תוצאות.</p>
+
+<p>אנחנו יכולים בנוסף <a href="https://internetarchive.readthedocs.io/en/latest/quickstart.html#searching">לחפש בארכיון באמצעות מודול הפייטון שהתקנו</a>,
+    ודרך זו קלה יותר כדי לבצע איטרציה על כל הפריטים בקולקציה למטרות סקירה והורדה.</p>
+
+<p>למשל, בואו נשנה את הקוד מהדוקומנטציה של המודול כדי לראות האם אנחנו יכולים לדעת, באמצעות פייטון, כמה פריטים יש בקולקציה נגד עבדות. הקוד נראה בערך כמו מה שנראה מתחת.
+     ההבדל היחיד הוא שבמקום לייבא רק את המודול של 
+     <code class="language-plaintext highlighter-rouge">search_items</code> מ-<code class="language-plaintext highlighter-rouge">internetarchive</code>, אנחנו הולכים לייבא את הספריה כולה.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">internetarchive</span>
+<span class="n">search</span> <span class="o">=</span> <span class="n">internetarchive</span><span class="p">.</span><span class="n">search_items</span><span class="p">(</span><span class="s">'collection:nasa'</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">search</span><span class="p">.</span><span class="n">num_found</span>
+</code></pre></div></div>
+
+<p>Aכל מה שאנחנו צריכים לשנות הוא המזהה של הקולקציה, מ-<code class="language-plaintext highlighter-rouge">nasa</code>
+ל-<code class="language-plaintext highlighter-rouge">bplscas</code>. 
+לאחר הפעלה האינטרפרטר של פייטון במחשב, נסו להכניס כל אחת מהשורות מעל וללחוץ אנטר בסופה. אל תשכחו לשנות את המזהה:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code><span class="n">search</span> <span class="o">=</span> <span class="n">internetarchive</span><span class="p">.</span><span class="n">search_items</span><span class="p">(</span><span class="s">'collection:bplscas'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>לאחר לחיצה על אנטר בשורת ההדפסה, אתם צריכים לראות מספר שמתאים למספר התוצאות שראיתם כשביצעתם 
+    <a href="https://archive.org/search.php?query=collection%3Abplscas">חיפוש מתקדם</a> בדפדפן.</p>
+
+<h2 id="accessing-an-ia-item-in-python">גישה לפריט בפייטון</h2>
+
+<p>המודול <code class="language-plaintext highlighter-rouge">internetarchive</code>מאפשר בנוסף גישה לפריטים ספציפיים באמצעות המזהה שלהם. בואו ננסה באמצעות 
+     <a href="https://internetarchive.readthedocs.io/en/latest/quickstart.html#downloading">הקוד מהדוקומנטציה</a>, נערוך את זה כדי לקבל את המכתב של Douglass עליו דברנו קודם.</p>
+
+<p>אם אתם עדין בשורת הפקודה של האינטרפרטר, אתם לא צריכים לבצע <code class="language-plaintext highlighter-rouge">import internetarchive</code> שוב.
+    מאחר וכבר ייבאנו את כל המודול, אנחנו צריכים גם לערוך את הקוד כך שהאינטרפרטר ידע ש-<code class="language-plaintext highlighter-rouge">get_item</code>
+    הוא מתוך המודול <code class="language-plaintext highlighter-rouge">internetarchive</code> אנחנו צריכים בנוסף לשנות את המזהה
+     <code class="language-plaintext highlighter-rouge">stairs</code> stairs למזהה שלנו,
+<em>lettertowilliaml00doug</em>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code><span class="n">item</span> <span class="o">=</span> <span class="n">internetarchive</span><span class="p">.</span><span class="n">get_item</span><span class="p">(</span><span class="s">'lettertowilliaml00doug'</span><span class="p">)</span>
+<span class="n">item</span><span class="p">.</span><span class="n">download</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>הכניסו את כל השורות הללו באינטרפרטר.
+     כתלות במהירות האינטרנט, יקח דקה או שתיים כדי לקבל תשובה מהפקודה, בגלל שהמחשב שלכם מוריד את כל הקבצים הקשורים לפריט הזה, כולל כמה תמונות די גדולות.
+      אך לאחר שההורדה תסתיים, אתם צריכים לראות תיקיה חדשה במחשב ששמה הוא המזהה הייחודי של הפריט. כדי לבדוק, ראשית צאו מהאינטרפרטר:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code><span class="nb">exit</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>לאחר מכן בדקו האם בתיקיית העבודה הנוכחית ישנה תיקייה חדשה בשם <code class="language-plaintext highlighter-rouge">lettertowilliaml00doug</code>.
+    אם תסתכלו בתוך התיקיה, תראו משהו דומה לזה:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code>39999066767938.djvu
+39999066767938.epub
+39999066767938.gif
+39999066767938.pdf
+39999066767938_abbyy.gz
+39999066767938_djvu.txt
+39999066767938_djvu.xml
+39999066767938_images.zip
+39999066767938_jp2.zip
+39999066767938_scandata.xml
+lettertowilliaml00doug_archive.torrent
+lettertowilliaml00doug_dc.xml
+lettertowilliaml00doug_files.xml
+lettertowilliaml00doug_marc.xml
+lettertowilliaml00doug_meta.mrc
+lettertowilliaml00doug_meta.xml
+lettertowilliaml00doug_metasource.xml
+</code></pre></div></div>
+
+<p>עכשיו כשאנחנו יודעים כיצד לבצע חיפוש ולעבוד עם פריטים במודול, אנחנו יכולים להתחיל לחשוב איך לעשות את התהליך הזה יעיל להורדה של המון מידע מהקולקציה לניתוח עתידי.</p>
+
+<h2 id="downloading-marc-records-from-a-collection">הורדת רשומות MARC מקולקציה</h2>
+
+<p>הורדת פריט יחיד זה נחמד, אבל מה אם אנחנו רוצים להסתכל על אלפי פריטים בקולקציה?
+    יש לנו מזל, בגלל שהחיפוש ב-
+    <code class="language-plaintext highlighter-rouge">internetarchive</code>
+    תומך באיטרציה על כך התוצאות בחיפוש.</p>
+
+<p>כדי לראות כיצד, ראשית בואו נפתח את האינטרפרטר שוב. אנחנו צריכים לייבא את המודול שלנו שוב, ולבצע חיפוש שוב:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">internetarchive</span>
+<span class="n">search</span> <span class="o">=</span> <span class="n">internetarchive</span><span class="p">.</span><span class="n">search_items</span><span class="p">(</span><span class="s">'collection:bplscas'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>כעת בואו נתבונן בקוד מהדוקומנטציה להדפסת המזהה של כל פריט שחזר בחיפוש:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code><span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">search</span><span class="p">:</span>
+   <span class="k">print</span> <span class="n">result</span><span class="p">[</span><span class="s">'identifier'</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>שימו לב שאחרי הכנסה של השורה הראשונה, האינטרפרטר ידפיס אוטומטית 3 נקודות בשורה השניה. זה קורה בגלל שביצעתם 
+    <em>לולאות for,</em> ופייטון מצפה שיהיו עוד.
+     האינטרפרטר רוצה לדעת מה אתם רוצים לבצע לכל תוצאה. זה גם למה, ברגע שלוחצים אנטר לאחר השורה השניה, תראו שורה שלישית עם עוד 3 נקודות.
+      בגלל שפייטון לא יודע אם סיימתם להגיד לו מה לעשות עם כל תוצאה. תלחצו אנטר שוב כדי לסיים את לולאות ה-for ולבצע את הפקודה.</p>
+
+<p>אתם צריכים לראות את הטרמינל מתחיל להדפיס את כל המזהים לכל תוצאה שחזרה על ידי חיפוש <em>bplscas</em>—במקרה זה, כל 7029 מהם! אתם יכולים לעצור את ההדפסה על ידי לחיצה על 
+    <code class="language-plaintext highlighter-rouge">Ctrl-C</code> במקלדת, שיחזיר אותכם לשורה הפקודה.</p>
+
+<p>אם לא ראיתם את המזהים מודפסים למסך, אך במקום ראיתם שגיאה כמו זו, אולי שכחתם לשים לב להזחה לפני פקודת ההדפסה.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code><span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">search</span><span class="p">:</span>
+   <span class="k">print</span> <span class="n">result</span><span class="p">[</span><span class="s">'identifier'</span><span class="p">]</span>
+<span class="n">File</span> <span class="s">""</span><span class="p">,</span> <span class="n">line</span> <span class="mi">2</span>
+   <span class="k">print</span> <span class="n">result</span><span class="p">[</span><span class="s">'identifier'</span><span class="p">]</span>
+      <span class="o">^</span>
+<span class="nb">IndentationError</span><span class="p">:</span> <span class="n">expected</span> <span class="n">an</span> <span class="n">indented</span> <span class="n">block</span>
+</code></pre></div></div>
+
+<p>זכרו שהזחות חשובות בפייטון, ואתם חייבים לבצע הזחה לקוד שבתוך לולאת for כך שהאינטרפרטר ידע אילו פקודות צריכות להתבצע בלולאה.</p>
+
+<h2 id="understanding-the-for-loop">הבנת לולאת ה-for</h2>
+
+<p><em>לולאת ה-for</em>, אומרת לפייטון לעשות משהו משהו לכל פריט באוסף של פריטים. במקרה למעלה, הדפסנו את המזהה של כל תוצאה בתוצאות שחזרו מהחיפוש. שתי נקודות נוספות על 
+     <em>לולאות for:</em></p>
+
+<p>ראשית, המילה שבה השתמשנו לאחר <code class="language-plaintext highlighter-rouge">ה-for</code> היא מה שנקרא <em>משתנה לוקאלי</em>
+    זה משמש כשומר מקום לכל מופע או פריט שנעבוד איתו בתוך הלולאה. 
+    בדרך כלל כדאי לבחור שם שמתאר עם איזה סוג של דבר אנחנו עובדים – במקרה הזה, תוצאת חיפוש – אבל יכלנו להשתמש בשמות אחרים במקום השם הזה. 
+    למשל, נסו להריץ את קוד הלולאה למעלה, אבל תחליפו לשם אחר עבור המשתנה הלוקאלי, כמו:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">search</span><span class="p">:</span>
+   <span class="k">print</span> <span class="n">item</span><span class="p">[</span><span class="s">'identifier'</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>אתם אמורים לקבל את אותן התוצאות.</p>
+
+<p>הדבר השני שצריך לציין בנוגע <em>ללולאות for</em>הוא שבלוק הקוד שהוזך יכל להכתב עם פקודות אחרות. 
+    במקרה הזה, הדפסנו כל מזהה ייחודי של תוצאה. אבל יכלנו לבחור, לכל תוצאה, כל דבר שיש לפריט בארכיון האינטרנטי.</p>
+
+<p>למשל, מקודם הורדנו את כל הקבצים שמשוייכים לפריט <em>lettertowilliaml00doug.</em> 
+    יכלנו לשנות לכל פריט שחזר מהחיפוש במקום השורה <code class="language-plaintext highlighter-rouge">print result['identifier']</code>
+    בלולאה שלנו ל <code class="language-plaintext highlighter-rouge">result.download()</code>.</p>
+
+<p>ככל הנראה נרצה לחשוב פעמיים לפני שנעשה זאת, שכן הורדת כל הקבצים לכל אחד מ-7029 הפריטים שחזרו זה הרבה קבצים. למזלנו, הפונקציה download במודול 
+<code class="language-plaintext highlighter-rouge">internetarchive</code> מאפשרת בנוסף
+ <a href="https://internetarchive.readthedocs.io/en/latest/quickstart.html#downloading">להוריד קבצים ספציפיים המשוייכים לפריט</a>.
+ אם היינו רוצים להוריד רק את רשומת ה-MARC XML הקשורה לפריט הספציפי, היינו יכולים לעשות כך:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code><span class="n">item</span> <span class="o">=</span> <span class="n">internetarchive</span><span class="p">.</span><span class="n">get_item</span><span class="p">(</span><span class="s">'lettertowilliaml00doug'</span><span class="p">)</span>
+<span class="n">marc</span> <span class="o">=</span> <span class="n">item</span><span class="p">.</span><span class="n">get_file</span><span class="p">(</span><span class="s">'lettertowilliaml00doug_marc.xml'</span><span class="p">)</span>
+<span class="n">marc</span><span class="p">.</span><span class="n">download</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>בגלל שפריטים בארכיון האינטרנטי <a href="https://archive.org/about/faqs.php#140">מקבלים שמות לפי חוקים ספציפיים</a>, 
+    אנחנו יכולים בנוסף להבין את השם של קובץ ה-MARC שאנחנו רוצים באמצעות ידיעת המזהה הייחודי בלבד. וכשאנחנו מצוידים בזה, ניתן להמשך ל..</p>
+
+<h2 id="download-all-the-marc-xml-files-from-a-collection">הורדת כל קבצי ה-MARC XML מתוך אוסף</h2>
+
+<p>עבור החלק הזה, אנחנו הולכים להתקדם משימוש בשורת פקודה לכתיבת סקריפט בפייטון שמוריד את רשומת ה-MARC מכל פריט ב-BPL Antislavery Collection. 
+    נסו לשים את הסקריפט הזה בתוך Komodo או עורך הטקסט המועדף עליכם:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code><span class="c1">#!/usr/bin/python
+</span>
+<span class="kn">import</span> <span class="nn">internetarchive</span>
+
+<span class="n">search</span> <span class="o">=</span> <span class="n">internetarchive</span><span class="p">.</span><span class="n">search_items</span><span class="p">(</span><span class="s">'collection:bplscas'</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">search</span><span class="p">:</span>
+    <span class="n">itemid</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s">'identifier'</span><span class="p">]</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">internetarchive</span><span class="p">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">itemid</span><span class="p">)</span>
+    <span class="n">marc</span> <span class="o">=</span> <span class="n">item</span><span class="p">.</span><span class="n">get_file</span><span class="p">(</span><span class="n">itemid</span> <span class="o">+</span> <span class="s">'_marc.xml'</span><span class="p">)</span>
+    <span class="n">marc</span><span class="p">.</span><span class="n">download</span><span class="p">()</span>
+    <span class="k">print</span> <span class="s">"Downloading "</span> <span class="o">+</span> <span class="n">itemid</span> <span class="o">+</span> <span class="s">" ..."</span>
+</code></pre></div></div>
+
+<p>הסקריפט הנ"ל נראה דומה מאוד לניסויים שעשינו עם המכתב של Frederick Douglass,
+     אבל מאחר ואנו רוצים להוריד את רשומות ה-MARC לכל פריט שחזר מחיפוש הקולקציה, אנחנו משתמשים במשתנה itemid כדי לקחת בחשבון 
+     את העבודה ששם הקובץ והמזהה הייחודי
+      שלו יהיו שונים לכל תוצאה.</p>
+
+<p>לפני שמריצים את הסקריפט (שחשוב לציין שהוא הולך להוריד אלפי קבצי XML קטנים למחשב שלכם), צרו תיקייה בה אתם רוצים לשמור את רשומות ה-MARC ושימו את הסקריפט למעלה בתיקייה הזו.
+     לאחר מכן הריצו את הסקריפט מתוך תיקייה זו כדי שהקבצים ירדו למקום שקל לכם למצוא.</p>
+
+<p>(שימו לב שאם אתם מקבלים שגיאת  <code class="language-plaintext highlighter-rouge">ConnectionError</code> בניסיון הראשון שלכם, תבדקו את חיבור האינטרנט שלכם, חכו מספר דקות ואז נסו להריץ את הסקריפט שוב).</p>
+
+<p>אם הכל עובר בשלום, כשתריצו את הסקריפט, אתם צריכים לראות את התוכנית מתחילה להדפיס הודעות בה היא מודיעה שהיא כרגע מורידה רשומות MARC. אבל אם תאשרו לסקריפט לרוץ את כל הזמן שהוא צריך, זה ככל הנראה יקח כמה שעות.
+     אז בואו נעצור את הסקריפט ונסתכל מקרוב כיצד ניתן לשפר אותו.
+     לחצו על <code class="language-plaintext highlighter-rouge">Ctrl-C</code> כשאתם בתוך חלון הטרמינל והתוכנית צריכה לעצור.</p>
+
+<h2 id="building-error-reporting-into-the-script">הוספת דיווח שגיאות לסקריפט</h2>
+
+<p>מאחר והורדת כל הרשומות האלו לוקחת קצת זמן, ככל הנראה נרצה לעזוב את המחשב לכמה רגעים. אבל יש סיכוי גבוה שבמהלך שעתיים אלו, משהו ישתבש וימנע מהסקריפט שלנו לרוץ.</p>
+
+<p>בואו נאמר, למשל, ששכחנו שכבר הורדנו קובץ מסויים לתיקיה הזו. או שאולי המחשב סוגר את החיבור לאינטרנט, או שיש תקלה כלשהי בשרת של הארכיון האינטרנטי שמונעת מהסקריפט לקבל את הקובץ אותו הוא רוצה.</p>
+
+<p>בכל המקרים האלו, פייטון יזרוק "exception" שיאמר לכם במה הבעיה. למרצה הצער, exception גם יגרום לסקריפט שלכם לקרוס ולא להמשיך לפריט הבא.</p>
+
+<p>כדי להמנע מזה, אנחנו יכולים להשתמש במה שנקרא <em>try statement</em> בפייטון. ה-try statement עושה בדיוק מה שמשתמע משמה. היא תנסה להריץ קטע קוד עד שנזרק exception, ובמקרה הזה ניתן לתת לקוד אחר לרוץ. ניתן לקרוא עוד על
+     <a href="https://docs.python.org/2/tutorial/errors.html#handling-exceptions">טיפול ב-exceptions</a> בדוקומנטציה של פייטון, אבל כרגע בואו רק נעדכן את הקוד שלנו כדי שיראה כך:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code><span class="c1">#!/usr/bin/python
+</span>
+<span class="kn">import</span> <span class="nn">internetarchive</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="n">error_log</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">'bpl-marcs-errors.log'</span><span class="p">,</span> <span class="s">'a'</span><span class="p">)</span>
+
+<span class="n">search</span> <span class="o">=</span> <span class="n">internetarchive</span><span class="p">.</span><span class="n">search_items</span><span class="p">(</span><span class="s">'collection:bplscas'</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">search</span><span class="p">:</span>
+    <span class="n">itemid</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s">'identifier'</span><span class="p">]</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">internetarchive</span><span class="p">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">itemid</span><span class="p">)</span>
+    <span class="n">marc</span> <span class="o">=</span> <span class="n">item</span><span class="p">.</span><span class="n">get_file</span><span class="p">(</span><span class="n">itemid</span> <span class="o">+</span> <span class="s">'_marc.xml'</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">marc</span><span class="p">.</span><span class="n">download</span><span class="p">()</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">error_log</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="s">'Could not download '</span> <span class="o">+</span> <span class="n">itemid</span> <span class="o">+</span> <span class="s">' because of error: %s</span><span class="se">\n</span><span class="s">'</span> <span class="o">%</span> <span class="n">e</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">"There was an error; writing to log."</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">"Downloading "</span> <span class="o">+</span> <span class="n">itemid</span> <span class="o">+</span> <span class="s">" ..."</span>
+        <span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>הדבר המרכזי שהוספנו כאן, אחרי הצהרת הייבוא ספרות שלנו, היא שורה שפותחת קובץ בשם <code class="language-plaintext highlighter-rouge">bpl-marcs-errors.log</code> 
+    ומכינה אותו להוספת טקסט. אנחנו הולכים להשתמש בקובץ זה כדי לתעד exceptions שיזרקו במהלך ריצת הסקריפט.  
+    ה-<em>try statement</em> שהוספנו <em>ללולאת ה-for</em> שלנו תנסה להוריד את רשומת ה-MARC. במידה ותכשל, התוכנית תכתוב לקובץ תיעוד מפורט בקשר למה קרה. בדרך הזו נוכל לחזור אחורה לקובץ לאחר מכן ולזהות אילו פריטים נצטרך להוריד מחדש. אם ה-try מצליח ויכול להוריד את הקובץ, הסקריפט ימשיך לחלק שרשום תחת 
+<em>else</em></p>
+
+<p>דבר נוסף שהוספנו, אם ההורדה מצליחה, היא השורה הזאת:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code><span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>השורה הזאת משתמשת במודול <code class="language-plaintext highlighter-rouge">time</code> שעכשיו אנחנו מייבאים בתחילת הסקריפט שלנו כדי לעצור לשניה אחת לפני שממשיכים, שזו בעצם דרך בשבילנו להיות נחמדים לשרתי הארכיון האינטרנטי על ידי המנעות מהצפה של בקשות בכל מילישניה.</p>
+
+<p>נסו לעדכן את הסקריפט שיראה כמו השורות למעלה, ותריצו את זה שוב בתיקיה שבה אתם רוצים לשמור את קבצי ה-MARC. אל תותפעו אם מיד תתקבלו בהודעת שגיאה, זה אומר שהסקריפט עושה מה שהוא אמור לעשות! חזרו ברוגע לעורך הטקסט שלכם, כל עוד הסקריפט רץ, ותפתחו את הקובץ
+<code class="language-plaintext highlighter-rouge">bpl-marcs-errors.log</code> כדי לראות אילו exceptions תועדו בו. אתם ככל הנראה תראו את ההודעה “File already exists” לכל אחד מהקבצים שכבר הורדתם בריצה הקודמת של הסקריפט הקצר יותר.</p>
+
+<p>אם תשאירו את התוכנית לרוץ קצת, הסקריפט בסופו של דבר יוריד פריטים שלא הורדתם לפני כן וימשיך לאסוף את ה-MARCS שלכם!</p>
+
+<h2 id="scraping-information-from-a-marc-record">חילוץ מידע מתוך רשומת ה-MARC</h2>
+
+<p>ברגע שסקריפט ההורדות שלכם סיים, אתם צריכים למצוא את עצמכם מחזיקים בקרוב ל-7000 רשומות MARC XML מפורטות מתוך ה-Antislavery Collection (או כל אוסף אחר ממנו ממנו הורדתם במקום, השיטות שתוארו למעלה יעבדו לכל אוסף אחר שיש לו קבצי MARC).</p>
+
+<p>מה עכשיו?</p>
+
+<p>השלב הבא תלוי באיזה סוג של שאלות על האוסף אתם רוצים לקבל תשובה. פורמט ה-MARC שומר מידע עשיר אודות הפריט, כפי שניתן לראות אם תחזרו 
+    <a href="https://archive.org/download/lettertowilliaml00doug/lettertowilliaml00doug_marc.xml">לרושמת ה-MARC XML עבור המכתב של Frederick Douglass</a> 
+</p>
+
+<p>שימו לב, למשל, שהמכתב של Douglass מכיל מידע בנוגע למקום שבו הוא נכתב <em>בשדה 260,</em> בתת השדה <em>a.</em> האדם שהכין את רשומת ה-MARC הזו ידע לשים את המידע בשדות הספציפיים האלה בגלל 
+<a href="https://www.loc.gov/marc/bibliographic/bd260.html">החוק עבור השדה 260</a> על ידי <a href="https://www.loc.gov/marc/">סטנדרט ה-MARC</a>.</p>
+
+<p>המשמעות של זה היא שצריך להיות אפשרי להסתכל בתוך כלל רשומות ה-MARC שהורדנו, לקחת את המידע בתוך השדה 
+    <em>260,</em> תת שדה <em>a,</em> וליצור רשימה של כל שמות המקומות בהם עצמים מהאוסף הזה פורסמו.</p>
+
+<p>כדי לעשות זאת, נשתמש במודול פייטון נוסף ושימושי שהורדתם בתחילת המדריך: <a href="https://github.com/edsu/pymarc">pymarc</a>.</p>
+
+<p>המודול נותן אפשרות לשלוף מידע מתתי-שדות בצורה פשוטה. בהנחה שיש לנו רשומת MARC מוכנה לפירסור על ידי המודול, ששמה record,נוכל לחלץ את המידע על מקום הפרסום בדרך הזו:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code><span class="n">place_of_pub</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s">'260'</span><span class="p">][</span><span class="s">'a'</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>הדוקומנטציה ל-<code class="language-plaintext highlighter-rouge">pymarc</code> היא פחות טובה מזו של הארכיון האינטרנטי, במיוחד כשזה מגיע לפירסור רשומות XML. 
+    אבל שיטוט קצר בקוד המקור של המודול מגלה כמה <a href="https://github.com/edsu/pymarc/blob/master/pymarc/marcxml.py">כמה פונקציות שהמודול נותן לעבודה עם רשומות MARC XML</a>.
+    אחת מהן, נקראת <code class="language-plaintext highlighter-rouge">map_xml()</code> ומתוארת באופן הבא:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code><span class="k">def</span> <span class="nf">map_xml</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="o">*</span><span class="n">files</span><span class="p">):</span>
+    <span class="s">"""
+    map a function onto the file, so that for each record that is
+    parsed the function will get called with the extracted record
+
+    def do_it(r):
+    print r
+
+    map_xml(do_it, 'marc.xml')
+    """</span>
+</code></pre></div></div>
+
+<p>בתרגום לעברית רגילה, הפונקציה הזו מראה שאנחנו יכולים לקחת קובץ XML המכיל רשומות MARC (יש לכם על המחשב עכשיו קרוב ל-7000 כאלו), להעביר את הקובץ ל-
+    <code class="language-plaintext highlighter-rouge">map_xml</code> 
+    מתוך ספריית ה-<code class="language-plaintext highlighter-rouge">pymarc</code> ואז לתאר באמצעות פונקציה אחרת (שנכתוב בהמשך) מה לעשות עם רשומת ה-MARC שחולצה מקובץ ה-XML. בגדול, הקוד שלנו יראה בערך ככה:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pymarc</span>
+
+<span class="k">def</span> <span class="nf">get_place_of_pub</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
+    <span class="n">place_of_pub</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s">'260'</span><span class="p">][</span><span class="s">'a'</span><span class="p">]</span>
+    <span class="k">print</span> <span class="n">place_of_pub</span>
+
+<span class="n">pymarc</span><span class="p">.</span><span class="n">map_xml</span><span class="p">(</span><span class="n">get_place_of_pub</span><span class="p">,</span> <span class="s">'lettertowilliaml00doug_marc.xml'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>נסו לשמור את הקוד לסקריפט להריץ אותו מתוך התיקיה שבה כבר יש את המכתב של Douglass בצורת XML. אם הכל ילך כשורה, הפלט צריך להיות:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code><span class="n">Belfast</span><span class="p">,</span> <span class="p">[</span><span class="n">Northern</span> <span class="n">Ireland</span><span class="p">],</span>
+</code></pre></div></div>
+
+<p>הנה! כמובן, הסקריפט יכל להיות הרבה יותר שימושי אם היינו מחלצים את המידע על מקום הפרסום מכל מכתב באוסף רשומות ה-MARC שלנו. על מנת לחבר ביחד את כל מה שלמדנו בשיעור זה,  אנחנו יכולים לכתוב את הסקריפט הבא:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight" dir="ltr"><pre class="highlight"><code><span class="c1">#!/usr/bin/python
+</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pymarc</span>
+
+<span class="n">path</span> <span class="o">=</span> <span class="s">'/path/to/dir/with/xmlfiles/'</span>
+
+<span class="k">def</span> <span class="nf">get_place_of_pub</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">place_of_pub</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s">'260'</span><span class="p">][</span><span class="s">'a'</span><span class="p">]</span>
+        <span class="k">print</span> <span class="n">place_of_pub</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">print</span> <span class="n">e</span>
+
+<span class="k">for</span> <span class="nb">file</span> <span class="ow">in</span> <span class="n">os</span><span class="p">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">file</span><span class="p">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">'.xml'</span><span class="p">):</span>
+        <span class="n">pymarc</span><span class="p">.</span><span class="n">map_xml</span><span class="p">(</span><span class="n">get_place_of_pub</span><span class="p">,</span> <span class="n">path</span> <span class="o">+</span> <span class="nb">file</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>הסקריפט הנ"ל משנה את הקוד למעלה בכמה אופנים. ראשית, הוא משתמש 
+<em>בלולאת for</em> כדי לבצע איטרציה על כל קובץ בתיקיה שלנו. במקום ביצוע איטרציה על תוצאות החיפוש שקבלנו בעזרת 
+<code class="language-plaintext highlighter-rouge">internetarchive</code> בחלק הראשון של השיעור, אנחנו עוברים על הקבצים שחזרו על ידי 
+<code class="language-plaintext highlighter-rouge">os.listdir(path)</code>
+המשתמשת במודול המובנה בפייטון <code class="language-plaintext highlighter-rouge">os</code>כדי לקבל רשימה של תכולת התיקיה המצויינת על ידי המשתנה path, שתצטרכו לשנות כדי שיתאים לתיקיה אליה אתם הורדתם את כל קבצי ה-MARC שלכם.</p>
+
+<p>הוספנו בנוסף טיפול בשגיאות לפונקציה <code class="language-plaintext highlighter-rouge">get_place_of_pub()</code>
+    שלנו, שתקח בחשבון שחלק מהרשומות (מכל סיבה שהיא) לא מכילים את המידע שאנחנו מחפשים. הפונקציה תנסה להדפיס את מקום הפרסום, אבל אם זה גורר זריקת exception, יודפס למסך המידע שחזר באמצעות exception זה. במקרה הזה, אם ה-try statement תכשל, ה-exception ככל הנראה ידפיס  <code class="language-plaintext highlighter-rouge">None</code>. 
+    להבין למה זה במסגרת שיעור אחר על שגיאות Types בפייטון, אבל כרגע ההדפסה של None היא אינפורמטיבית מספיק עבור מה שקרה, לכן זה שימושי לנו.</p>
+
+<p>נסו להריץ את הסקריפט. אם הכל הולך כשורה, המסך שלכם צריך להתחיל להתמלא עם רשימה של מקומות בהם כל המכתבים האלה נכתבו. אם זה עובד, נסו לערוך את הסקריפט ככה שהוא ישמור את שמות המקומות לתוך קובץ טקסט במקום להדפיס אותם למסך. אתם יכולים להשתמש לאחר מכן 
+<a href="https://programminghistorian.org/lessons/counting-frequencies">במניית שכיחויות</a> כדי להבין מי משמות המקומות הוא הנפוץ ביותר בקולקציה. אתם יכולים לעבוד עם שמות הקבצים כדי למצוא קורדינטות שתוכלו לשים במפה בעזרת שיעור השימוש ב-<a href="/lessons/googlemaps-googleearth">Google Maps</a>.</p>
+
+<p>או, לקבל תחושה ויזואלית של שמות המקומות בהם המכתבים נכתבו, תוכלו לעשות מה שעשיתי מתחת ופשוט להכין <a href="http://www.wordle.net/">Wordle
+word cloud</a> של קובץ הטקסט.</p>
+
+<figure>
+    <img src="https://programminghistorian.org/images/data-mining-the-internet-archive/bpl-wordle.png" alt="Wordle wordcloud of places of publication for abolitionist letters" />
+<figcaption>
+    <p>Wordle wordcloud of places of publication for abolitionist letters</p>
+
+</figcaption>
+</figure>
+
+<p>כמובן, כדי להפוך טכניקות כאלה למועילות צריך <a href="https://programminghistorian.org/lessons/cleaning-ocrd-text-with-regular-expressions">לנקות עוד את הדאטה</a>. 
+    שימושים אחרים של שיעור זה עשויים להיות מועילים עוד יותר. למשל, באמצצעות עבודה עם שדות MARC של שמות פרטיים, תוכלו ליצור רשת של נמענים. או שתוכלו לנתח אילו נושאים נפוצים ברשומות ה-MARC. כעת כשיש לכם רשומות MARC במחשב אתם יכולים להשתמש ב-<code class="language-plaintext highlighter-rouge">pymarc</code> 
+    כדי לחלץ מידע מתוך השדות, האפשרויות גדלות במהירות!</p>
+  </div>
+</div>
+</div>
+
+<script>
+  (function () {
+    var githubAPI = "https://api.github.com/repos/programminghistorian/jekyll/commits";
+    $.getJSON(githubAPI, {
+      path: "en/lessons/data-mining-the-internet-archive.md"
+    })
+      .done(function (data) {
+        var date = new Date(data[0].commit.author.date);
+        var formatted_date = new Intl.DateTimeFormat('sv').format(date)
+        $("#modified-date").text(formatted_date);
+      });
+  })();
+</script>
+
+
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2752866-8']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+    </main>
+  </body>
+
+</html>
